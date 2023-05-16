@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"followers", "following"})
 @ToString(exclude = "password")
 public class User implements UserDetails {
 
@@ -42,11 +43,13 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> followers;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<User> followers = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private Set<User> following;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<User> following = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

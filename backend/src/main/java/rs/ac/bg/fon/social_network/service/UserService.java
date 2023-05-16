@@ -19,10 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public Page<User> getAll(Pageable pageable) {
-//        User currentlyLoggedInUser = getCurrentlyLoggedInUser();
-//        if(currentlyLoggedInUser.getRole().equals(Role.ADMIN)) {
         return userRepository.findAll(pageable);
-//        }
     }
 
     public User getCurrentlyLoggedInUser() {
@@ -33,16 +30,22 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    public boolean followAnotherUser(Long followingUserId) {
+    public void followAnotherUser(Long followingUserId) {
         User currentlyLoggedInUser = getCurrentlyLoggedInUser();
-        User followinUser = getById(followingUserId);
-        return currentlyLoggedInUser.getFollowing().add(followinUser);
+        User followingUser = getById(followingUserId);
+        currentlyLoggedInUser.getFollowing().add(followingUser);
+        followingUser.getFollowers().add(currentlyLoggedInUser);
+        userRepository.save(currentlyLoggedInUser);
+        userRepository.save(followingUser);
     }
 
-    public boolean unfollow(Long userIdToUnfollow) {
+    public void unfollow(Long userIdToUnfollow) {
         User currentlyLoggedInUser = getCurrentlyLoggedInUser();
         User userToUnfollow = getById(userIdToUnfollow);
-        return currentlyLoggedInUser.getFollowing().remove(userToUnfollow);
+        currentlyLoggedInUser.getFollowing().remove(userToUnfollow);
+        userToUnfollow.getFollowers().remove(currentlyLoggedInUser);
+        userRepository.save(currentlyLoggedInUser);
+        userRepository.save(userToUnfollow);
     }
 
     public Page<User> getFollowers(Pageable pageable) {

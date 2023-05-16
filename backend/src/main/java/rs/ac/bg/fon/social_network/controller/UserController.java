@@ -41,12 +41,12 @@ public class UserController {
     }
 
     @PostMapping("/follow/{followingUserId}")
-    public boolean followAnotherUser(@PathVariable Long followingUserId) {
-        return userService.followAnotherUser(followingUserId);
+    public void followAnotherUser(@PathVariable Long followingUserId) {
+        userService.followAnotherUser(followingUserId);
     }
 
     @DeleteMapping("/unfollow/{followingUserId}")
-    public boolean unfollowAnotherUser(@PathVariable Long userIdToUnfollow) {
-        return userService.unfollow(userIdToUnfollow);
+    public void unfollowAnotherUser(@PathVariable Long userIdToUnfollow) {
+        userService.unfollow(userIdToUnfollow);
     }
 }
