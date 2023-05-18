@@ -12,7 +12,7 @@ import rs.ac.bg.fon.social_network.domain.Gender;
 @ToString
 public class RegisterRequest {
   private String firstname;
-  private String lastnamee;
+  private String lastname;
   private String email;
   private Gender gender;
   private String username;

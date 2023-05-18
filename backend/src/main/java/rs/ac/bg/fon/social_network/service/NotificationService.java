@@ -39,7 +39,8 @@ public class NotificationService {
         if (!currentlyLoggedInUser.equals(notification.getSubscriber())) {
             throw new AccessDeniedException("User cannot access different users notifications.");
         }
-        return notification;
+        notification.setIsRead(true);
+        return notificationRepository.save(notification);
     }
 
     public void deleteById(Long id) {

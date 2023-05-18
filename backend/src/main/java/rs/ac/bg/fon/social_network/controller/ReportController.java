@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.bg.fon.social_network.domain.Post;
 import rs.ac.bg.fon.social_network.domain.Report;
 import rs.ac.bg.fon.social_network.service.ReportService;
 
@@ -23,5 +24,14 @@ public class ReportController {
     @GetMapping("/{id}")
     public Report getByID(@PathVariable Long id) {
         return reportService.getById(id);
+    }
+
+    @PostMapping
+    public Report reportPost(@RequestBody Post reportedPost) {
+        return reportService.reportPost(reportedPost);
+    }
+    @PostMapping("/post/{postId}")
+    public Report reportPost(@PathVariable Long reportedPostId) {
+        return reportService.reportPost(reportedPostId);
     }
 }

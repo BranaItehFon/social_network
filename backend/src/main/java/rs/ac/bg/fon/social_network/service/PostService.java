@@ -5,10 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import rs.ac.bg.fon.social_network.domain.Post;
-import rs.ac.bg.fon.social_network.domain.Role;
-import rs.ac.bg.fon.social_network.domain.User;
+import rs.ac.bg.fon.social_network.domain.*;
+import rs.ac.bg.fon.social_network.repository.CommentRepository;
 import rs.ac.bg.fon.social_network.repository.PostRepository;
+import rs.ac.bg.fon.social_network.repository.ReactionRepository;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -19,6 +19,8 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final ReactionRepository reactionRepository;
+    private final CommentRepository commentRepository;
 
     public Page<Post> getAll(Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
@@ -59,5 +61,32 @@ public class PostService {
         if(postRepository.existsById(id)) {
             postRepository.deleteById(id);
         }
+    }
+
+    public Reaction reactToPost(Long postId, Reaction reaction) {
+        User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
+        Post postToReact = getById(postId);
+        reaction.setPost(postToReact);
+        reaction.setTimestamp(LocalDateTime.now());
+        reaction.setLikedByUser(currentlyLoggedInUser);
+        reaction.setReactionType(reaction.getReactionType());
+        return reactionRepository.save(reaction);
+    }
+
+    public Page<Reaction> getReactionsById(Long postId, Pageable pageable) {
+        return reactionRepository.findByPostId(postId, pageable);
+    }
+
+    public Comment commentPost(Long postId, Comment comment) {
+        User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
+        Post postForCommenting = getById(postId);
+        comment.setPost(postForCommenting);
+        comment.setTimePosted(LocalDateTime.now());
+        comment.setCreator(currentlyLoggedInUser);
+        return commentRepository.save(comment);
+    }
+
+    public Page<Comment> getAllCommentsForPost(Long postId, Pageable pageable) {
+        return commentRepository.findByPostId(postId, pageable);
     }
 }
