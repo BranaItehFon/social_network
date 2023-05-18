@@ -6,10 +6,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import rs.ac.bg.fon.social_network.domain.Notification;
 import rs.ac.bg.fon.social_network.domain.Role;
 import rs.ac.bg.fon.social_network.domain.User;
+import rs.ac.bg.fon.social_network.repository.NotificationRepository;
 import rs.ac.bg.fon.social_network.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Service
@@ -17,6 +20,7 @@ import java.util.NoSuchElementException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
 
     public Page<User> getAll(Pageable pageable) {
         return userRepository.findAll(pageable);
@@ -37,6 +41,14 @@ public class UserService {
         followingUser.getFollowers().add(currentlyLoggedInUser);
         userRepository.save(currentlyLoggedInUser);
         userRepository.save(followingUser);
+
+        Notification notification = Notification.builder()
+                .content(currentlyLoggedInUser.getUsername() + " has followed " + followingUser.getUsername())
+                .subscriber(followingUser)
+                .publisher(currentlyLoggedInUser)
+                .timestamp(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
     }
 
     public void unfollow(Long userIdToUnfollow) {
@@ -46,6 +58,14 @@ public class UserService {
         userToUnfollow.getFollowers().remove(currentlyLoggedInUser);
         userRepository.save(currentlyLoggedInUser);
         userRepository.save(userToUnfollow);
+
+        Notification notification = Notification.builder()
+                .content(currentlyLoggedInUser.getUsername() + " has unfollowed " + userToUnfollow.getUsername())
+                .subscriber(userToUnfollow)
+                .publisher(currentlyLoggedInUser)
+                .timestamp(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
     }
 
     public Page<User> getFollowers(Pageable pageable) {
