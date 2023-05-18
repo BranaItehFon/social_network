@@ -20,6 +20,11 @@ public class UserController {
         return userService.getAll(pageable);
     }
 
+    @GetMapping("/currentlyLoggedIn")
+    public User getCurrentlyLoggedInUser() {
+        return userService.getCurrentlyLoggedInUser();
+    }
+
     @GetMapping("/{id}")
     public User getById(@PathVariable Long id) {
         return userService.getById(id);
