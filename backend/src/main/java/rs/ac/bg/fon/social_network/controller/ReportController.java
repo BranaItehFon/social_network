@@ -30,7 +30,7 @@ public class ReportController {
     public Report reportPost(@RequestBody Post reportedPost) {
         return reportService.reportPost(reportedPost);
     }
-    @PostMapping("/post/{postId}")
+    @PostMapping("/post/{reportedPostId}")
     public Report reportPost(@PathVariable Long reportedPostId) {
         return reportService.reportPost(reportedPostId);
     }

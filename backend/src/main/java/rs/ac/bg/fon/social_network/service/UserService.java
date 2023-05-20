@@ -94,4 +94,9 @@ public class UserService {
     public Page<User> findByUsername(String username, Pageable pageable) {
         return userRepository.findByUsernameContainsIgnoreCase(username, pageable);
     }
+
+    public boolean isFollowing(Long userId) {
+        User currentlyLoggedInUser = getCurrentlyLoggedInUser();
+        return currentlyLoggedInUser.getFollowing().contains(getById(userId));
+    }
 }

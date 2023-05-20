@@ -50,8 +50,13 @@ public class UserController {
         userService.followAnotherUser(followingUserId);
     }
 
-    @DeleteMapping("/unfollow/{followingUserId}")
+    @DeleteMapping("/unfollow/{userIdToUnfollow}")
     public void unfollowAnotherUser(@PathVariable Long userIdToUnfollow) {
         userService.unfollow(userIdToUnfollow);
+    }
+
+    @GetMapping("/isFollowing/{userId}")
+    public boolean isFollowing(@PathVariable Long userId) {
+        return userService.isFollowing(userId);
     }
 }
