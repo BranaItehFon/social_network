@@ -50,4 +50,5 @@ public class NotificationService {
             throw new AccessDeniedException("User cannot access different users notifications.");
         notificationRepository.delete(notification);
     }
+
 }

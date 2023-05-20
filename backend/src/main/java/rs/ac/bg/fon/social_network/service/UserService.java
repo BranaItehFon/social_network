@@ -24,8 +24,8 @@ import java.util.NoSuchElementException;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final NotificationRepository notificationRepository;
     private final ActionService actionService;
+    private final NotificationRepository notificationRepository;
 
     public Page<User> getAll(Pageable pageable) {
         return
@@ -55,14 +55,16 @@ public class UserService {
         userRepository.save(followingUser);
 
         actionService.createAction(getCurrentlyLoggedInUser());
-        
+
         Notification notification = Notification.builder()
                 .content(currentlyLoggedInUser.getUsername() + " has followed " + followingUser.getUsername())
                 .subscriber(followingUser)
                 .publisher(currentlyLoggedInUser)
                 .timestamp(LocalDateTime.now())
+                .isRead(false)
                 .build();
         notificationRepository.save(notification);
+
     }
 
     public void unfollow(Long userIdToUnfollow) {
@@ -80,7 +82,9 @@ public class UserService {
                 .subscriber(userToUnfollow)
                 .publisher(currentlyLoggedInUser)
                 .timestamp(LocalDateTime.now())
+                .isRead(false)
                 .build();
+
         notificationRepository.save(notification);
     }
 
