@@ -1,0 +1,26 @@
+.new-post{
+    display: flex;
+    /* width: 500px; */
+    height: 300px;
+}
+
+textarea{
+    width: 400px;
+}
+
+.btn-container{
+    width: 400px;
+    justify-content: space-between;
+    height: 40px;
+    display: flex;
+}
+
+.btn{
+    background-color: #003366;
+    border-color: transparent;
+    /* color: #003366; */
+}
+
+.btn:hover{
+    color: white;
+}

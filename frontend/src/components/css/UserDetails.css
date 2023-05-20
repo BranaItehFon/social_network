@@ -1,0 +1,56 @@
+.user-details {
+    width: 800px;
+    margin-left: 35%;
+  }
+  
+  .title {
+    margin-bottom: 20px;
+  }
+  
+  .title h2 {
+    font-size: 44px;
+    font-weight: bold;
+  }
+  
+  .box {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .box p {
+    width: 48%;
+  }
+  
+  .box p strong {
+    font-weight: bold;
+  }
+  
+  .my-profile{
+    background-color: #f5f5f5;
+  }
+
+  .new-post{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .posts {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    margin-top: 8%;
+  }
+  
+  .post {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+  }
+  
+  /* Add any additional styling as needed */
+  
