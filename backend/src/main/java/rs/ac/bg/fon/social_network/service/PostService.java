@@ -93,8 +93,12 @@ public class PostService {
 
     public Page<Post> getAllByUser(Long userId, Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
+
+        if(currentlyLoggedInUser.getRole().equals(Role.ADMIN))
+            return postRepository.findByCreatorId(userId, pageable);
+
         User user = userService.getById(userId);
-        if(!currentlyLoggedInUser.getFollowing().contains(user) || !currentlyLoggedInUser.equals(user)) {
+        if(!currentlyLoggedInUser.getFollowing().contains(user) && !currentlyLoggedInUser.equals(user)) {
             throw new AccessDeniedException("You cannot access posts from user that you do not follow!");
         }
         return postRepository.findByCreatorId(userId, pageable);
