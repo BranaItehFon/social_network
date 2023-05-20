@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.social_network.domain.*;
 import rs.ac.bg.fon.social_network.repository.CommentRepository;
@@ -88,5 +89,14 @@ public class PostService {
 
     public Page<Comment> getAllCommentsForPost(Long postId, Pageable pageable) {
         return commentRepository.findByPostId(postId, pageable);
+    }
+
+    public Page<Post> getAllByUser(Long userId, Pageable pageable) {
+        User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
+        User user = userService.getById(userId);
+        if(!currentlyLoggedInUser.getFollowing().contains(user) || !currentlyLoggedInUser.equals(user)) {
+            throw new AccessDeniedException("You cannot access posts from user that you do not follow!");
+        }
+        return postRepository.findByCreatorId(userId, pageable);
     }
 }

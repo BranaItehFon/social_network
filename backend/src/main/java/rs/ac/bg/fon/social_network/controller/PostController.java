@@ -21,6 +21,10 @@ public class PostController {
     public Page<Post> getAll(Pageable pageable) {
         return postService.getAll(pageable);
     }
+    @GetMapping("/users/{userId}")
+    public Page<Post> getAll(@PathVariable Long userId, Pageable pageable) {
+        return postService.getAllByUser(userId, pageable);
+    }
 
     @GetMapping("/{id}")
     public Post getById(@PathVariable Long id) {
