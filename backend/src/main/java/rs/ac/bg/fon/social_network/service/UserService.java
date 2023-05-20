@@ -23,7 +23,14 @@ public class UserService {
     private final NotificationRepository notificationRepository;
 
     public Page<User> getAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return
+                new PageImpl<>(
+                        userRepository.findAll(pageable)
+                                .stream()
+                                .filter(user -> user.getRole().equals(Role.USER))
+                                .filter(user -> !user.equals(getCurrentlyLoggedInUser()))
+                                .toList()
+                );
     }
 
     public User getCurrentlyLoggedInUser() {
