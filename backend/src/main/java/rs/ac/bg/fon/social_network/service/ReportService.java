@@ -21,6 +21,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final UserService userService;
     private final PostService postService;
+    private final ActionService actionService;
 
     public Page<Report> getAll(Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
@@ -43,11 +44,13 @@ public class ReportService {
                 .reporter(currentlyLoggedInUser)
                 .timestamp(LocalDateTime.now())
                 .build();
+        actionService.createAction(userService.getCurrentlyLoggedInUser());
         return reportRepository.save(report);
     }
 
     public Report reportPost(Long reportedPostId) {
         Post postToReport = postService.getById(reportedPostId);
+        actionService.createAction(userService.getCurrentlyLoggedInUser());
         return reportPost(postToReport);
     }
 }

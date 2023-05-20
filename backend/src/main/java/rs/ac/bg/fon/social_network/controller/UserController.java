@@ -4,8 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.bg.fon.social_network.domain.Action;
 import rs.ac.bg.fon.social_network.domain.User;
 import rs.ac.bg.fon.social_network.service.UserService;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -59,4 +64,10 @@ public class UserController {
     public boolean isFollowing(@PathVariable Long userId) {
         return userService.isFollowing(userId);
     }
+
+    @GetMapping("/{userId}/actions")
+    public Map<LocalDate, List<Action>> getActionsByUser(@PathVariable Long userId) {
+        return userService.getActionsByUser(userId);
+    }
+
 }

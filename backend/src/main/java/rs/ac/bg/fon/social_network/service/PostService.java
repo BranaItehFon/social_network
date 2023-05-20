@@ -10,6 +10,7 @@ import rs.ac.bg.fon.social_network.domain.*;
 import rs.ac.bg.fon.social_network.repository.CommentRepository;
 import rs.ac.bg.fon.social_network.repository.PostRepository;
 import rs.ac.bg.fon.social_network.repository.ReactionRepository;
+import rs.ac.bg.fon.social_network.repository.ReportRepository;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -22,6 +23,8 @@ public class PostService {
     private final UserService userService;
     private final ReactionRepository reactionRepository;
     private final CommentRepository commentRepository;
+    private final ReportRepository reportRepository;
+    private final ActionService actionService;
 
     public Page<Post> getAll(Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
@@ -53,14 +56,17 @@ public class PostService {
         if(userService.getCurrentlyLoggedInUser().getRole().equals(Role.ADMIN)) {
             throw new IllegalStateException("You must be logged in as regular user to create a post");
         }
+        actionService.createAction(userService.getCurrentlyLoggedInUser());
         post.setCreator(userService.getCurrentlyLoggedInUser());
         post.setTimePosted(LocalDateTime.now());
         return postRepository.save(post);
     }
 
-    public void deletePost(Long id) {
-        if(postRepository.existsById(id)) {
-            postRepository.deleteById(id);
+    public void deletePost(Long postId) {
+        if(postRepository.existsById(postId)) {
+            reportRepository.deleteAll(reportRepository.findByReportedPostId(postId));
+            actionService.createAction(userService.getCurrentlyLoggedInUser());
+            postRepository.deleteById(postId);
         }
     }
 
@@ -71,6 +77,9 @@ public class PostService {
         reaction.setTimestamp(LocalDateTime.now());
         reaction.setLikedByUser(currentlyLoggedInUser);
         reaction.setReactionType(reaction.getReactionType());
+
+        actionService.createAction(userService.getCurrentlyLoggedInUser());
+
         return reactionRepository.save(reaction);
     }
 
@@ -84,6 +93,9 @@ public class PostService {
         comment.setPost(postForCommenting);
         comment.setTimePosted(LocalDateTime.now());
         comment.setCreator(currentlyLoggedInUser);
+
+        actionService.createAction(userService.getCurrentlyLoggedInUser());
+
         return commentRepository.save(comment);
     }
 

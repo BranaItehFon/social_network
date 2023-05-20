@@ -21,6 +21,7 @@ public class PostController {
     public Page<Post> getAll(Pageable pageable) {
         return postService.getAll(pageable);
     }
+
     @GetMapping("/users/{userId}")
     public Page<Post> getAll(@PathVariable Long userId, Pageable pageable) {
         return postService.getAllByUser(userId, pageable);
@@ -45,6 +46,7 @@ public class PostController {
     public Reaction reactToPost(@PathVariable Long postId, @RequestBody Reaction reaction) {
         return postService.reactToPost(postId, reaction);
     }
+
     @GetMapping("/{postId}/reactions")
     public Page<Reaction> getReactionsForPostById(@PathVariable Long postId, Pageable pageable) {
         return postService.getReactionsById(postId, pageable);
@@ -54,6 +56,7 @@ public class PostController {
     public Comment commentOnPost(@PathVariable Long postId, @RequestBody Comment comment) {
         return postService.commentPost(postId, comment);
     }
+
     @GetMapping("/{postId}/comments")
     public Page<Comment> getCommentsForPostById(@PathVariable Long postId, Pageable pageable) {
         return postService.getAllCommentsForPost(postId, pageable);

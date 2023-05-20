@@ -6,13 +6,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import rs.ac.bg.fon.social_network.domain.Action;
 import rs.ac.bg.fon.social_network.domain.Notification;
 import rs.ac.bg.fon.social_network.domain.Role;
 import rs.ac.bg.fon.social_network.domain.User;
 import rs.ac.bg.fon.social_network.repository.NotificationRepository;
 import rs.ac.bg.fon.social_network.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -21,6 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final ActionService actionService;
 
     public Page<User> getAll(Pageable pageable) {
         return
@@ -49,6 +54,8 @@ public class UserService {
         userRepository.save(currentlyLoggedInUser);
         userRepository.save(followingUser);
 
+        actionService.createAction(getCurrentlyLoggedInUser());
+        
         Notification notification = Notification.builder()
                 .content(currentlyLoggedInUser.getUsername() + " has followed " + followingUser.getUsername())
                 .subscriber(followingUser)
@@ -65,6 +72,8 @@ public class UserService {
         userToUnfollow.getFollowers().remove(currentlyLoggedInUser);
         userRepository.save(currentlyLoggedInUser);
         userRepository.save(userToUnfollow);
+
+        actionService.createAction(getCurrentlyLoggedInUser());
 
         Notification notification = Notification.builder()
                 .content(currentlyLoggedInUser.getUsername() + " has unfollowed " + userToUnfollow.getUsername())
@@ -98,5 +107,9 @@ public class UserService {
     public boolean isFollowing(Long userId) {
         User currentlyLoggedInUser = getCurrentlyLoggedInUser();
         return currentlyLoggedInUser.getFollowing().contains(getById(userId));
+    }
+
+    public Map<LocalDate, List<Action>> getActionsByUser(Long userId) {
+        return actionService.getActionsByUser(userId);
     }
 }
