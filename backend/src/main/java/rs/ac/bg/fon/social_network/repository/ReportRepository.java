@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
+    boolean existsByReportedPostId(Long id);
     List<Report> findByReportedPostId(Long id);
 }

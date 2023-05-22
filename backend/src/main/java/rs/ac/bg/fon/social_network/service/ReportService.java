@@ -25,19 +25,22 @@ public class ReportService {
 
     public Page<Report> getAll(Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
-        if(!currentlyLoggedInUser.getRole().equals(Role.ADMIN))
+        if (!currentlyLoggedInUser.getRole().equals(Role.ADMIN))
             throw new AccessDeniedException("Only admin can access reports");
         return reportRepository.findAll(pageable);
     }
 
     public Report getById(Long id) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
-        if(!currentlyLoggedInUser.getRole().equals(Role.ADMIN))
+        if (!currentlyLoggedInUser.getRole().equals(Role.ADMIN))
             throw new AccessDeniedException("Only admin can access reports");
         return reportRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     public Report reportPost(Post reportedPost) {
+        if (reportRepository.existsByReportedPostId(reportedPost.getId())) {
+            throw new IllegalStateException("You cannot report a post multiple times");
+        }
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
         Report report = Report.builder()
                 .reportedPost(reportedPost)
@@ -50,12 +53,14 @@ public class ReportService {
 
     public Report reportPost(Long reportedPostId) {
         Post postToReport = postService.getById(reportedPostId);
-        actionService.createAction(userService.getCurrentlyLoggedInUser());
+        if (reportRepository.existsByReportedPostId(reportedPostId)) {
+            throw new IllegalStateException("You cannot report a post multiple times");
+        }
         return reportPost(postToReport);
     }
 
     public void deleteReport(Long reportId) {
-        if(reportRepository.existsById(reportId)) {
+        if (reportRepository.existsById(reportId)) {
             reportRepository.deleteById(reportId);
         }
     }
