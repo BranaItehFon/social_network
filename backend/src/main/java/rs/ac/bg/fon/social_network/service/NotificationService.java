@@ -10,6 +10,8 @@ import rs.ac.bg.fon.social_network.domain.Role;
 import rs.ac.bg.fon.social_network.domain.User;
 import rs.ac.bg.fon.social_network.repository.NotificationRepository;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -33,9 +35,9 @@ public class NotificationService {
 
     public Notification getById(Long id) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
-        Notification notification = getById(id);
+        Notification notification = notificationRepository.findById(id).orElseThrow(NoSuchElementException::new);
         if (currentlyLoggedInUser.getRole().equals(Role.ADMIN))
-            return notification;
+            throw new AccessDeniedException("Admin cannot access notifications");
         if (!currentlyLoggedInUser.equals(notification.getSubscriber())) {
             throw new AccessDeniedException("User cannot access different users notifications.");
         }
