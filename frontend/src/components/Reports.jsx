@@ -21,6 +21,20 @@ const Reports = () => {
 
         getReports();
     }, []);
+    console.log(reports);
+    const deletePost = async (postId) => {
+        try {
+            const response = await axios.delete('http://localhost:8080/api/v1/posts/' + postId,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            });
+            console.log(response)
+        } catch (error) {
+            console.error('Post failed:', error);
+            throw error;
+        }
+    }
     return (
         <div className="report-page">
             <div className="reports">
@@ -31,15 +45,19 @@ const Reports = () => {
                             <th>Reported Post Content</th>
                             <th>Post author</th>
                             <th>Reported by</th>
+                            <th>Delete post</th>
+                            <th>Dismiss</th>
                         </tr>
                     </thead>
                     <tbody>
                         {reports.map((report) => (
                             <tr key={report.id}>
                                 <td>{report.timestamp}</td>
-                                <td>{report.postContent}</td>
-                                <td>{report.postContent}</td>
-                                <td>{report.reporter}</td>
+                                <td>{report.reportedPost.content}</td>
+                                <td>{report.reportedPost.creator.username}</td>
+                                <td>{report.reporter.username}</td>
+                                <td><button onClick={() => deletePost(report.reportedPost.id)}>Delete</button></td>
+                                <td><button onClick={() => deletePost(report.reportedPost.id)}>Delete</button></td>
                             </tr>
                         ))}
                     </tbody>

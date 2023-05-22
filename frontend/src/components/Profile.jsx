@@ -1,109 +1,224 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import './css/UserDetails.css';
+import "./css/UserDetails.css";
 import NewPost from "./NewPost";
 import { useParams } from "react-router-dom";
 import Post from "./Post";
 
-const Profile = ({ isMyProfile}) => {
-    const { id } = useParams();
-    
-    const [user, setUser] = useState();
-    const [posts, setPosts] = useState([]);
-    useEffect(() => {
-        const getUser1 = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/v1/users/' + id, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setUser(response.data)
-                console.log(response);
-            } catch (error) {
-                console.error('Login failed:', error);
-                throw error;
-            }
+const Profile = () => {
+  const getIsFollowing = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/users/isFollowing/" + id,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-        const getUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setUser(response.data)
-            } catch (error) {
-                console.error('Login failed:', error);
-                throw error;
-            }
-        }
-        const getPosts = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/v1/posts', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setPosts(response.data)
-                console.log(response);
-            } catch (error) {
-                console.error('Login failed:', error);
-                throw error;
-            }
-        }
-        if(id != undefined){
-            getUser1();
-            console.log('tstt');
-            // getPosts1(); // napravi putanju za postove nekog drugog korisnika
-        }
-        else{
-            getUser();
-            getPosts();
-        }
+      );
+      setIsFollowing(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  };
+  const { id } = useParams();
+  const [isFollowing, setIsFollowing] = useState(getIsFollowing());
+  const [user, setUser] = useState();
+  const [currentUser, setCurrentUser] = useState();
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/users/currentlyLoggedIn",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setCurrentUser(response.data);
+      } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+      }
+    };
+    const getUser = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/users/" + id,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setUser(response.data);
+        // console.log(user)
+      } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+      }
+    };
+    getUser();
+    getCurrentUser();
+  }, []);
+  useEffect(() => {
+    const getPosts = async () => {
+      console.log(isFollowing + "WTF");
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/posts/users/" + id,
+          {
+            params: {
+              size: 1,
+              page: currentPage,
+            },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setPosts(response.data.content);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
+        console.error("Login failed:", error);
+        throw error;
+      }
+    };
+
+    if (typeof isFollowing === "boolean") {
+      if (isFollowing || currentUser?.id == id) {
         getPosts();
-    }, [id])
-    console.log(user)
-    return (
-        <>
-            <div className="my-profile">
-                <div className="user-details">
-                    <div className="title">
-                        <h2 style={{ fontSize: '44px', fontWeight: 'bold' }}>
-                            {user?.firstname} {user?.lastname}
-                        </h2>
-                    </div>
-                    <div className="box">
-                        <p>
-                            <strong>Username:</strong> {user?.username}
-                        </p>
-                        <p>
-                            <strong>Email:</strong> {user?.email}
-                        </p>
-                    </div>
-                    <div className="box">
-                        <p>
-                            <strong>Gender:</strong> {user?.gender}
-                        </p>
-                        <p>
-                            <strong>Role:</strong> {user?.role}
-                        </p>
-                    </div>
+      } else {
+        setPosts([]);
+      }
+    }
+  }, [isFollowing, currentPage]);
 
-                </div>
+  const follow = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/users/follow/" + id,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setIsFollowing(true);
+    } catch (error) {
+      console.error("Failed to follow user:", error);
+      throw error;
+    }
+  };
 
-            </div>
-            <div className="new-post">
-                {isMyProfile && <NewPost />}
-            </div>
-            <div className="posts">
-                {!isMyProfile ? posts.map((post) => (
+  const unfollow = async () => {
+    try {
+      const response = await axios.delete(
+        "http://localhost:8080/api/v1/users/unfollow/" + id,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setIsFollowing(false);
+    } catch (error) {
+      console.error("Post failed:", error);
+      throw error;
+    }
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePageClick = (pageIndex) => {
+    setCurrentPage(pageIndex);
+  };
+  return (
+    <>
+      <div className="my-profile">
+        <div className="user-details">
+          <div className="title">
+            <h2 style={{ fontSize: "44px", fontWeight: "bold" }}>
+              {user?.firstname} {user?.lastname}
+              {currentUser?.id != id &&
+                (isFollowing == true ? (
+                  <>
+                    <button className="btn" onClick={() => unfollow()}>
+                      Unfollow
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button className="btn" onClick={() => follow()}>
+                      Follow
+                    </button>
+                  </>
+                ))}
+            </h2>
+          </div>
+          <div className="box">
+            <p>
+              <strong>Username:</strong> {user?.username}
+            </p>
+            <p>
+              <strong>Email:</strong> {user?.email}
+            </p>
+          </div>
+          <div className="box">
+            <p>
+              <strong>Gender:</strong> {user?.gender}
+            </p>
+            <p>
+              <strong>Role:</strong> {user?.role}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="new-post">{currentUser?.id == id && <NewPost />}</div>
+      <div className="pagination-container">
+        <button onClick={handlePreviousPage} disabled={currentPage === 0}>
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageClick(index)}
+            disabled={currentPage === index}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages - 1}
+        >
+          Next
+        </button>
+      </div>
+      <div className="posts">
+        {/* {!isMyProfile ? posts.map((post) => (
                     <Post post={post} key={post.id}/>
                 )): <></>}
-                {posts.length === 1 ? <h1>There are no posts</h1> : <h1>test</h1>}
-            </div>
-        </>
-    );
-}
+                {posts.length === 1 ? <h1>There are no posts</h1> : <h1>test</h1>} */}
+        {posts.map((post) => (
+          <Post post={post} key={post.id} isMyPost={currentUser?.id == id} />
+        ))}
+      </div>
+    </>
+  );
+};
 
 export default Profile;

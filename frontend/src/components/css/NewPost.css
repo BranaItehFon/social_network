@@ -1,7 +1,7 @@
 .new-post{
     display: flex;
     /* width: 500px; */
-    height: 300px;
+    height: 150px;
 }
 
 textarea{

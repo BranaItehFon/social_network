@@ -9,6 +9,7 @@ const Users = () => {
     const navigate = useNavigate();
 
     const getUsersByUsername = async (username) => {
+        if(username!=''){
         try {
             const response = await axios.get('http://localhost:8080/api/v1/users/username/' + username, {
                 headers: {
@@ -19,7 +20,7 @@ const Users = () => {
         } catch (error) {
             console.error('Failed to fetch users by username:', error);
             throw error;
-        }
+        }}
     };
 
     useEffect(() => {
@@ -38,7 +39,7 @@ const Users = () => {
             }
         };
 
-        if (username !== '') {
+        if (username != '') {
             getUsers();
         }
     }, [username]);
@@ -73,60 +74,24 @@ const Users = () => {
         }
     };
 
-    const follow = async (id) => {
-        try {
-            const response = await axios.post('http://localhost:8080/api/v1/users/follow/' + id,  {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-            });
-            console.log(id);
-        } catch (error) {
-            console.error('Failed to follow user:', error);
-            throw error;
-        }
-    };
-
-    const unfollow = async (id) => {
-        try {
-            const response = await axios.delete('http://localhost:8080/api/v1/users/unfollow/'+id,{
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-            });
-            console.log(response.data);
-        } catch (error) {
-            console.error('Post failed:', error);
-            throw error;
-        }
-    }
-
     return (
         <div className="users-page">
             <div className="search">
-                <input type="text" id='search' />
-                <button className="btn" onClick={() => getUsersByUsername(document.getElementById('search').value)}>Search</button>
-                <button className="btn" onClick={() => getFollowers()}>Followers</button>
-                <button className="btn" onClick={() => getFollowing()}>Folowing</button>
+                
+                <div className="left">
+                    <input type="text" id='search' />
+                    <button className="btn" onClick={() => getUsersByUsername(document.getElementById('search').value)}>Search</button>
+                </div>
+                <div className="right">
+                    <button className="btn" onClick={() => getFollowers()}>Followers</button>
+                    <button className="btn" onClick={() => getFollowing()}>Folowing</button>
+                </div>
             </div>
             <div className="users">
                 {users && users.map((user) => (
-                    <div
-                        className="user"
-                        key={user.id}
-                        onClick={(event) => {
-                            if (!event.target.matches('.btn')) {
-                                console.log(user.id);
-                            }
-                        }}
-                    >
-                        <h3>{user?.firstname}</h3>
-                        <button className="btn" onClick={() => follow(user.id)}>
-                            Follow
-                        </button>
-                        <button className="btn" onClick={() => unfollow(user.id)}>
-                            Unfollow
-                        </button>
+                    <div className="user">
+                        <h3>{user?.firstname} {user?.lastname}</h3>
+                        <button className="btn" onClick={() => navigate('/user/'+user.id)}>Visit profile</button>
                     </div>
                 ))}
             </div>

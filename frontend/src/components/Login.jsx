@@ -22,7 +22,7 @@ const Login = ({ setIsLoggedIn, isLoggedIn }) => {
           console.log(response.data);
           setIsLoggedIn(true);
           localStorage.setItem('token', response.data.token)
-          navigate('/myProfile');
+          navigate('/mainPage');
         } catch (error) {
           console.error('Login failed:', error);
           throw error;
