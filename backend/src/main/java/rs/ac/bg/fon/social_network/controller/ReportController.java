@@ -34,4 +34,9 @@ public class ReportController {
     public Report reportPost(@PathVariable Long reportedPostId) {
         return reportService.reportPost(reportedPostId);
     }
+
+    @DeleteMapping("/{reportId}")
+    public void deleteReport(@PathVariable Long reportId) {
+        reportService.deleteReport(reportId);
+    }
 }

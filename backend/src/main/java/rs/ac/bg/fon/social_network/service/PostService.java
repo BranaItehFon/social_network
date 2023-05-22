@@ -65,6 +65,7 @@ public class PostService {
     public void deletePost(Long postId) {
         if(postRepository.existsById(postId)) {
             reportRepository.deleteAll(reportRepository.findByReportedPostId(postId));
+            reactionRepository.deleteAll(reactionRepository.findByPostId(postId));
             actionService.createAction(userService.getCurrentlyLoggedInUser());
             postRepository.deleteById(postId);
         }

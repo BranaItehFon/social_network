@@ -53,4 +53,10 @@ public class ReportService {
         actionService.createAction(userService.getCurrentlyLoggedInUser());
         return reportPost(postToReport);
     }
+
+    public void deleteReport(Long reportId) {
+        if(reportRepository.existsById(reportId)) {
+            reportRepository.deleteById(reportId);
+        }
+    }
 }
