@@ -1,0 +1,38 @@
+.notification-unread {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .notification-unread p {
+    margin: 5px 0;
+  }
+  
+  .user-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .publisher, .subscriber {
+    width: 48%;
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+  
+  .publisher h4, .subscriber h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  .notification-read {
+    background-color: #eaeaea;
+    color: #888;
+  }
+  
+  .notification-important {
+    background-color: #ffcccc;
+    border-color: #ff0000;
+  }
+  

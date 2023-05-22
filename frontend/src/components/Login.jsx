@@ -9,6 +9,7 @@ const Login = ({ setIsLoggedIn, isLoggedIn }) => {
 
     useEffect(() => {
         setIsLoggedIn(false);
+        localStorage.removeItem('token');
     }, [])
 
     const login = async () => {

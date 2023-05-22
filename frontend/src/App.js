@@ -11,9 +11,15 @@ import Reports from './components/Reports';
 import Notifications from './components/Notifications';
 import Activity from './components/Activity';
 import axios from 'axios';
+import Notification from './components/Notification';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token'))
+  // alert(isLoggedIn)
+  // useEffect(() => {
+  //   if(localStorage.getItem('token') != null) setIsLoggedIn(true);
+  //   else setIsLoggedIn(false);
+  // }, localStorage.getItem('token'))
 
   return (
     <BrowserRouter>
@@ -21,6 +27,7 @@ function App() {
         <Navbar isLoggedIn={isLoggedIn}/>
         <div className="body">
           <Routes>
+          <Route path='/' element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>}/>
             <Route path='/login' element={<Login setIsLoggedIn={setIsLoggedIn} isLoggedIn={isLoggedIn}/>}/>
             <Route path='/register' element={<Register/>}/>
             <Route path='/mainPage' element={<MainPage/>}/>
@@ -30,6 +37,7 @@ function App() {
             <Route path='/user/:id' element={<Profile/>}/>
             <Route path='/reports' element={<Reports/>}/>
             <Route path='/notification' element={<Notifications/>}/>
+            <Route path='/notification/notification/:id' element={<Notification/>}/>
             <Route path='/analitika' element={<Activity/>}/>
           </Routes>
         </div>

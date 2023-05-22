@@ -6,6 +6,7 @@ const Navbar = ({ isLoggedIn, notifications }) => {
     const [user, setUser] = useState();
     const [isAdmin, setIsAdmin] = useState();
     useEffect(() => {
+        
         const getUser = async () => {
             try {
                 const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
@@ -14,18 +15,24 @@ const Navbar = ({ isLoggedIn, notifications }) => {
                     }
                 });
                 setUser(response.data)
-                setIsAdmin(user?.role==='ADMIN')
+                setIsAdmin(response.data.role==='ADMIN')
                 console.log(user)
             } catch (error) {
                 console.error('Login failed:', error);
                 throw error;
             }
         }
+        if(isLoggedIn){
+            getUser();
+            // alert(user?.role)
+        }
         
-        getUser();
+        // if(isLoggedIn===undefined){
+        //     alert(isLoggedIn)
+        // }
         
       }, [isLoggedIn]);
-      console.log(user)
+      
     return (
         <div className="navbar">
             <div className="navbar-left">
@@ -33,10 +40,9 @@ const Navbar = ({ isLoggedIn, notifications }) => {
                 {isLoggedIn && <Link to={'/myProfile'}><button className="navbar-btn">My profile</button></Link>}
                 {isLoggedIn && <Link to={'/users'}><button className="navbar-btn">Users</button></Link>} */}
                 {isLoggedIn && <Link to={'/mainPage'}><button className="navbar-btn">Main page</button></Link>}
-                {!isAdmin && isLoggedIn && <Link to={'/user/'+user?.id}><button className="navbar-btn">My profile</button></Link>}
-                {isLoggedIn && <Link to={'/users'}><button className="navbar-btn">Users</button></Link>}
-                {isLoggedIn && isAdmin && <Link to={'/reports'}><button className="navbar-btn">Reports</button></Link>}
-                {isAdmin && isLoggedIn && <Link to={'/analitika'}><button className="navbar-btn">Activity</button></Link>}
+                {!isAdmin && (isLoggedIn || isLoggedIn===undefined) && <Link to={'/user/'+user?.id}><button className="navbar-btn">My profile</button></Link>}
+                {(isLoggedIn || isLoggedIn===undefined) && <Link to={'/users'}><button className="navbar-btn">Users</button></Link>}
+                {(isLoggedIn || isLoggedIn===undefined) && isAdmin && <Link to={'/reports'}><button className="navbar-btn">Reports</button></Link>}
             </div>
             <div className="navbar-right">
             {/* {user?.role === 'USER'  && <Link to={'/notification'}><button className="navbar-btn" style={{ backgroundColor:'red' }}>Notifications</button></Link>} */}

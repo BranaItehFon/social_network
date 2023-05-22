@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./css/Post.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "react-bootstrap";
 
 const Post = ({ post, isMyPost }) => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const Post = ({ post, isMyPost }) => {
   const [loves, setLoves] = useState([]);
   const [angrys, setAngrys] = useState([]);
   const [sads, setSads] = useState([]);
+  const [commentCount, setCommentCount] = useState(0); // New state variable for comment count
+
   useEffect(() => {
     const showComments = async () => {
       try {
@@ -47,19 +50,6 @@ const Post = ({ post, isMyPost }) => {
           }
         );
         setReactions(response.data.content);
-        setLikes(
-          reactions.filter((reaction) => reaction.reactionType === "LIKE")
-        );
-        setLoves(
-          reactions.filter((reaction) => reaction.reactionType === "LOVE")
-        );
-        setAngrys(
-          reactions.filter((reaction) => reaction.reactionType === "ANGRY")
-        );
-        setSads(
-          reactions.filter((reaction) => reaction.reactionType === "SAD")
-        );
-        console.log(reactions);
       } catch (error) {
         console.error("Login failed:", error);
         throw error;
@@ -67,7 +57,22 @@ const Post = ({ post, isMyPost }) => {
     };
     showComments();
     showReactions();
-  }, [currentPage]);
+  }, [currentPage, commentCount]); // Include commentCount in the dependency array
+
+  useEffect(() => {
+    setLikes(
+      reactions.filter((reaction) => reaction.reactionType === "LIKE")
+    );
+    setLoves(
+      reactions.filter((reaction) => reaction.reactionType === "LOVE")
+    );
+    setAngrys(
+      reactions.filter((reaction) => reaction.reactionType === "ANGRY")
+    );
+    setSads(
+      reactions.filter((reaction) => reaction.reactionType === "SAD")
+    );
+  }, [reactions]); // Add missing dependency array
 
   const report = async () => {
     try {
@@ -82,8 +87,8 @@ const Post = ({ post, isMyPost }) => {
       );
       console.log(response.data);
     } catch (error) {
-      console.error("Post failed:", error);
-      throw error;
+      alert(error.response.data.body.detail);
+      // throw error;
     }
   };
   const react = async (react) => {
@@ -153,6 +158,9 @@ const Post = ({ post, isMyPost }) => {
   const handlePageClick = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
+
+  const [showReactions, setShowReactions] = useState(false);
+
   return (
     <div className="post">
       <div className="post-header">
@@ -188,7 +196,7 @@ const Post = ({ post, isMyPost }) => {
           >
             👍
           </button>
-          {likes?.length === 0 ? <></> : <>{likes?.length}</>}
+          <>{likes?.length}</>
         </>
         <>
           <button
@@ -197,7 +205,7 @@ const Post = ({ post, isMyPost }) => {
           >
             💖
           </button>
-          {loves?.length === 0 ? <></> : <>{loves?.length}</>}
+          <>{loves?.length}</>
         </>
         <>
           <button
@@ -206,7 +214,7 @@ const Post = ({ post, isMyPost }) => {
           >
             😠
           </button>
-          {angrys?.length === 0 ? <></> : <>{angrys?.length}</>}
+          <>{angrys?.length}</>
         </>
         <>
           <button
@@ -215,7 +223,7 @@ const Post = ({ post, isMyPost }) => {
           >
             😥
           </button>
-          {sads?.length === 0 ? <></> : <>{sads?.length}</>}
+          <>{sads?.length}</>
         </>
       </div>
       <div className="comment">
@@ -255,18 +263,20 @@ const Post = ({ post, isMyPost }) => {
               <h5 onClick={() => navigate("/user/" + one.creator.id)}>
                 {one.creator.firstname} {one.creator.lastname}
               </h5>
-              <span> {one.content}</span>
+              <span>{one?.timePosted}: {one.content}</span>
             </div>
           ))}
       </div>
-      <div className="reactions">
+      <button className="btn" onClick={() => setShowReactions(!showReactions)}>Show reactions</button>
+      {showReactions && <div className="reactions">
         {reactions &&
           reactions.map((reaction) => (
             <h5>
-              {reaction?.likedByUser.username} reacted: {reaction?.reactionType}
+              {reaction?.timestamp}:{reaction?.likedByUser.username} reacted: {reaction?.reactionType}
             </h5>
           ))}
-      </div>
+      </div>}
+      
     </div>
   );
 };

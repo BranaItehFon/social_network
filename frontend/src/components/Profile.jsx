@@ -4,6 +4,7 @@ import "./css/UserDetails.css";
 import NewPost from "./NewPost";
 import { useParams } from "react-router-dom";
 import Post from "./Post";
+import Activity from "./Activity";
 
 const Profile = () => {
   const getIsFollowing = async () => {
@@ -146,6 +147,27 @@ const Profile = () => {
   const handlePageClick = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
+
+  const apiKey = '679d126b013a2dbe4ebe1c6dc2ddd56c';
+const location = 'London'; // Specify the location for which you want to retrieve weather data
+
+const getWeatherData = async () => {
+  try {
+    const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+      params: {
+        q: location,
+        appid: apiKey,
+      },
+    });
+
+    console.log(response.data); // Display the weather data in the console or process it as needed
+  } catch (error) {
+    console.error('Failed to fetch weather data:', error);
+  }
+};
+
+getWeatherData();
+
   return (
     <>
       <div className="my-profile">
@@ -169,6 +191,7 @@ const Profile = () => {
                 ))}
             </h2>
           </div>
+          {currentUser?.id == id && <Activity/>}
           <div className="box">
             <p>
               <strong>Username:</strong> {user?.username}
@@ -180,9 +203,6 @@ const Profile = () => {
           <div className="box">
             <p>
               <strong>Gender:</strong> {user?.gender}
-            </p>
-            <p>
-              <strong>Role:</strong> {user?.role}
             </p>
           </div>
         </div>

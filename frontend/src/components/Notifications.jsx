@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState();
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-
+  const navigate = useNavigate();
+  
 useEffect(() => {
   const getNotifications = async () => {
     try {
@@ -61,15 +63,16 @@ console.log(notifications)
 </button>
 
       </div>
+      
         {notifications &&
-          notifications.map((notification) => (
-            notification?.isRead ?  <div className="lighter" key={notification.id} style={{ color: 'grey' }}><h3 key={notification.id} style={{ margin: "20px" }}>
+          notifications.map((notification) => (<div className="single-notification" onClick={() => navigate('notification/'+notification.id)}>
+            {notification?.isRead ?  <div className="lighter" key={notification.id} style={{ color: 'grey' }}><h3 key={notification.id} style={{ margin: "20px" }}>
             {notification.timestamp} {notification.content}!
           </h3></div> :  <div className="darker" key={notification.id} style={{ color: 'black'}}><h3 key={notification.id} style={{ margin: "20px" }}>
               {notification.timestamp} {notification.content}!
-            </h3></div> 
-            
+            </h3></div>} </div>
           ))}
+          
       </div>
     </div>
   );
