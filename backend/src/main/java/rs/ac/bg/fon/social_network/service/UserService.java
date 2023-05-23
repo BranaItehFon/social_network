@@ -1,9 +1,6 @@
 package rs.ac.bg.fon.social_network.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.social_network.domain.Action;
@@ -27,15 +24,12 @@ public class UserService {
     private final ActionService actionService;
     private final NotificationRepository notificationRepository;
 
-    public Page<User> getAll(Pageable pageable) {
-        return
-                new PageImpl<>(
-                        userRepository.findAll(pageable)
-                                .stream()
-                                .filter(user -> user.getRole().equals(Role.USER))
-                                .filter(user -> !user.equals(getCurrentlyLoggedInUser()))
-                                .toList()
-                );
+    public List<User> getAll() {
+        return userRepository.findAll()
+                        .stream()
+                        .filter(user -> user.getRole().equals(Role.USER))
+                        .filter(user -> !user.equals(getCurrentlyLoggedInUser()))
+                        .toList();
     }
 
     public User getCurrentlyLoggedInUser() {
@@ -88,24 +82,24 @@ public class UserService {
         notificationRepository.save(notification);
     }
 
-    public Page<User> getFollowers(Pageable pageable) {
+    public List<User> getFollowers() {
         User currentlyLoggedInUser = getCurrentlyLoggedInUser();
         if (currentlyLoggedInUser.getRole().equals(Role.ADMIN)) {
             throw new IllegalStateException("You cannot have followers while being authenticated as admin");
         }
-        return new PageImpl<>(currentlyLoggedInUser.getFollowers().stream().toList(), pageable, currentlyLoggedInUser.getFollowers().size());
+        return currentlyLoggedInUser.getFollowers().stream().toList();
     }
 
-    public Page<User> getFollowing(Pageable pageable) {
+    public List<User> getFollowing() {
         User currentlyLoggedInUser = getCurrentlyLoggedInUser();
         if (currentlyLoggedInUser.getRole().equals(Role.ADMIN)) {
             throw new IllegalStateException("You cannot have followers while being authenticated as admin");
         }
-        return new PageImpl<>(currentlyLoggedInUser.getFollowing().stream().toList(), pageable, currentlyLoggedInUser.getFollowing().size());
+        return currentlyLoggedInUser.getFollowing().stream().toList();
     }
 
-    public Page<User> findByUsername(String username, Pageable pageable) {
-        return userRepository.findByUsernameContainsIgnoreCase(username, pageable);
+    public List<User> findByUsername(String username) {
+        return userRepository.findByUsernameContainsIgnoreCase(username);
     }
 
     public boolean isFollowing(Long userId) {

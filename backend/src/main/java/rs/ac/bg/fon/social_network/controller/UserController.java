@@ -1,8 +1,6 @@
 package rs.ac.bg.fon.social_network.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.bg.fon.social_network.domain.Action;
 import rs.ac.bg.fon.social_network.domain.User;
@@ -21,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Page<User> getAll(Pageable pageable) {
-        return userService.getAll(pageable);
+    public List<User> getAll() {
+        return userService.getAll();
     }
 
     @GetMapping("/currentlyLoggedIn")
@@ -36,18 +34,18 @@ public class UserController {
     }
 
     @GetMapping("/username/{username}")
-    public Page<User> findByUsername(@PathVariable String username, Pageable pageable) {
-        return userService.findByUsername(username, pageable);
+    public List<User> findByUsername(@PathVariable String username) {
+        return userService.findByUsername(username);
     }
 
     @GetMapping("/followers")
-    public Page<User> getFollowers(Pageable pageable) {
-        return userService.getFollowers(pageable);
+    public List<User> getFollowers() {
+        return userService.getFollowers();
     }
 
     @GetMapping("/following")
-    public Page<User> getFollowing(Pageable pageable) {
-        return userService.getFollowing(pageable);
+    public List<User> getFollowing() {
+        return userService.getFollowing();
     }
 
     @PostMapping("/follow/{followingUserId}")
