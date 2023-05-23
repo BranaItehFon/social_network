@@ -9,6 +9,8 @@ import rs.ac.bg.fon.social_network.domain.Post;
 import rs.ac.bg.fon.social_network.domain.Reaction;
 import rs.ac.bg.fon.social_network.service.PostService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/posts")
 @CrossOrigin
@@ -18,8 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public Page<Post> getAll(Pageable pageable) {
-        return postService.getAll(pageable);
+    public List<Post> getAll() {
+        return postService.getAll();
     }
 
     @GetMapping("/users/{userId}")

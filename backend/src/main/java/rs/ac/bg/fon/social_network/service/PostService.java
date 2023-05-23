@@ -2,7 +2,6 @@ package rs.ac.bg.fon.social_network.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import rs.ac.bg.fon.social_network.repository.ReactionRepository;
 import rs.ac.bg.fon.social_network.repository.ReportRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -26,17 +26,15 @@ public class PostService {
     private final ReportRepository reportRepository;
     private final ActionService actionService;
 
-    public Page<Post> getAll(Pageable pageable) {
+    public List<Post> getAll() {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
         if (currentlyLoggedInUser.getRole().equals(Role.ADMIN))
-            return postRepository.findAll(pageable);
-        return new PageImpl<>(
-                postRepository
-                        .findAll(pageable)
-                        .stream()
-                        .filter(post -> post.getCreator().getFollowers().contains(currentlyLoggedInUser))
-                        .toList()
-        );
+            return postRepository.findAll();
+        return postRepository
+                .findAll()
+                .stream()
+                .filter(post -> post.getCreator().getFollowers().contains(currentlyLoggedInUser))
+                .toList();
     }
 
     public Post getById(Long id) {
@@ -53,7 +51,7 @@ public class PostService {
     }
 
     public Post savePost(Post post) {
-        if(userService.getCurrentlyLoggedInUser().getRole().equals(Role.ADMIN)) {
+        if (userService.getCurrentlyLoggedInUser().getRole().equals(Role.ADMIN)) {
             throw new IllegalStateException("You must be logged in as regular user to create a post");
         }
         actionService.createAction(userService.getCurrentlyLoggedInUser());
@@ -63,7 +61,7 @@ public class PostService {
     }
 
     public void deletePost(Long postId) {
-        if(postRepository.existsById(postId)) {
+        if (postRepository.existsById(postId)) {
             reportRepository.deleteAll(reportRepository.findByReportedPostId(postId));
             reactionRepository.deleteAll(reactionRepository.findByPostId(postId));
             commentRepository.deleteAll(commentRepository.findByPostId(postId));
@@ -108,11 +106,11 @@ public class PostService {
     public Page<Post> getAllByUser(Long userId, Pageable pageable) {
         User currentlyLoggedInUser = userService.getCurrentlyLoggedInUser();
 
-        if(currentlyLoggedInUser.getRole().equals(Role.ADMIN))
+        if (currentlyLoggedInUser.getRole().equals(Role.ADMIN))
             return postRepository.findByCreatorId(userId, pageable);
 
         User user = userService.getById(userId);
-        if(!currentlyLoggedInUser.getFollowing().contains(user) && !currentlyLoggedInUser.equals(user)) {
+        if (!currentlyLoggedInUser.getFollowing().contains(user) && !currentlyLoggedInUser.equals(user)) {
             throw new AccessDeniedException("You cannot access posts from user that you do not follow!");
         }
         return postRepository.findByCreatorId(userId, pageable);

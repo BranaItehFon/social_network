@@ -20,6 +20,7 @@ public class Post {
     @GeneratedValue
     private Long id;
 
+    @Column(length = 2047)
     private String content;
 
     @ManyToOne

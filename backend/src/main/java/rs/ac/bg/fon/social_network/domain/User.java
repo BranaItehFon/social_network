@@ -43,11 +43,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany
     @JsonIgnore
     private Set<User> followers = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany
     @JsonIgnore
     private Set<User> following = new HashSet<>();
 
