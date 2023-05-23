@@ -51,10 +51,6 @@ const Register = () => {
                 <input type="password" id="password" name="password" required />
             </div>
             <div className="form-group">
-                <label htmlFor="confirm-password">Confirm Password:</label>
-                <input type="password" id="confirm-password" name="confirm-password" required />
-            </div>
-            <div className="form-group">
                 <label htmlFor="gender">Gender:</label>
                 <select id="gender" name="gender"  style={{ marginLeft: '15%', width: '300px', height: '40px'}}>
                     <option value="">Select</option>

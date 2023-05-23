@@ -4,6 +4,7 @@ import { Table } from 'react-bootstrap';
 
 const Reports = () => {
     const [reports, setReports] = useState([]);
+
     useEffect(() => {
         const getReports = async () => {
             try {
@@ -21,7 +22,8 @@ const Reports = () => {
 
         getReports();
     }, []);
-    console.log(reports);
+
+
     const deletePost = async (postId) => {
         try {
             const response = await axios.delete('http://localhost:8080/api/v1/posts/' + postId,{
@@ -29,12 +31,14 @@ const Reports = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
             });
-            console.log(response)
+            console.log(response);
+            setReports(reports.filter(report => report.reportedPost.id !== postId));
         } catch (error) {
             console.error('Post failed:', error);
             throw error;
         }
-    }
+    };
+
     const dismissReport = async (reportId) => {
         try {
             const response = await axios.delete('http://localhost:8080/api/v1/reports/' + reportId,{
@@ -42,12 +46,14 @@ const Reports = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
             });
-            console.log(response)
+            console.log(response);
+            setReports(reports.filter(report => report.id !== reportId));
         } catch (error) {
             console.error('Post failed:', error);
             throw error;
         }
-    }
+    };
+
     return (
         <div className="report-page">
             <div className="reports">
@@ -69,15 +75,18 @@ const Reports = () => {
                                 <td>{report.reportedPost.content}</td>
                                 <td>{report.reportedPost.creator.username}</td>
                                 <td>{report.reporter.username}</td>
-                                <td><button className="navbar-btn" style={{ color: 'blue' }} onClick={() => deletePost(report.reportedPost.id)}>Delete</button></td>
-                                <td><button className="navbar-btn" style={{ color: 'blue' }} onClick={() => dismissReport(report.id)}>Dismiss</button></td>
+                                <td>
+                                    <button className="navbar-btn" style={{ color: 'blue' }} onClick={() => deletePost(report.reportedPost.id)}>Delete</button>
+                                </td>
+                                <td>
+                                    <button className="navbar-btn" style={{ color: 'blue' }} onClick={() => dismissReport(report.id)}>Dismiss</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
             </div>
         </div>
-
     );
 }
 

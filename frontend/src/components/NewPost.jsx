@@ -24,7 +24,7 @@ const NewPost = () => {
               'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
           });
-          console.log(response.data);
+          window.location.reload();
         } catch (error) {
           console.error('Post failed:', error);
           throw error;

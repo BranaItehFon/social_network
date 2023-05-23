@@ -4,13 +4,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 
-const Post = ({ post, isMyPost }) => {
+const Post = ({ post, isMyPost, isAdmin }) => {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [reactions, setReactions] = useState([]);
-  const [likes, setLikes] = useState();
+  const [likes, setLikes] = useState([]);
   const [loves, setLoves] = useState([]);
   const [angrys, setAngrys] = useState([]);
   const [sads, setSads] = useState([]);
@@ -35,10 +35,11 @@ const Post = ({ post, isMyPost }) => {
         setTotalPages(response.data.totalPages);
         console.log(response.data.content);
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("Fetching comments failed:", error);
         throw error;
       }
     };
+
     const showReactions = async () => {
       try {
         const response = await axios.get(
@@ -51,27 +52,20 @@ const Post = ({ post, isMyPost }) => {
         );
         setReactions(response.data.content);
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("Fetching reactions failed:", error);
         throw error;
       }
     };
+
     showComments();
     showReactions();
   }, [currentPage, commentCount]); // Include commentCount in the dependency array
 
   useEffect(() => {
-    setLikes(
-      reactions.filter((reaction) => reaction.reactionType === "LIKE")
-    );
-    setLoves(
-      reactions.filter((reaction) => reaction.reactionType === "LOVE")
-    );
-    setAngrys(
-      reactions.filter((reaction) => reaction.reactionType === "ANGRY")
-    );
-    setSads(
-      reactions.filter((reaction) => reaction.reactionType === "SAD")
-    );
+    setLikes(reactions.filter((reaction) => reaction.reactionType === "LIKE"));
+    setLoves(reactions.filter((reaction) => reaction.reactionType === "LOVE"));
+    setAngrys(reactions.filter((reaction) => reaction.reactionType === "ANGRY"));
+    setSads(reactions.filter((reaction) => reaction.reactionType === "SAD"));
   }, [reactions]); // Add missing dependency array
 
   const report = async () => {
@@ -91,7 +85,8 @@ const Post = ({ post, isMyPost }) => {
       // throw error;
     }
   };
-  const react = async (react) => {
+
+  const react = async (reactionType) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/v1/posts/" + post.id + "/react",
@@ -106,7 +101,8 @@ const Post = ({ post, isMyPost }) => {
       );
       console.log(response.data);
     } catch (error) {
-      console.error("Post failed:", error);
+      // console.error("Post failed:", error);
+      alert(error.response.data.body.detail);
       throw error;
     }
   };
@@ -123,7 +119,7 @@ const Post = ({ post, isMyPost }) => {
           },
         }
       );
-      console.log(response.data);
+      window.location.reload();
     } catch (error) {
       console.error("Post failed:", error);
       throw error;
@@ -131,21 +127,18 @@ const Post = ({ post, isMyPost }) => {
   };
   const deletePost = async () => {
     try {
-      const response = await axios.delete(
-        "http://localhost:8080/api/v1/posts/" + post.id,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
+        const response = await axios.delete('http://localhost:8080/api/v1/posts/' + post.id,{
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        });
+        console.log(response);
+        window.location.reload();
     } catch (error) {
-      console.error("Post failed:", error);
-      throw error;
+        console.error('Post failed:', error);
+        throw error;
     }
-  };
+};
   const [content, setContent] = useState("");
   const handlePreviousPage = () => {
     setCurrentPage(currentPage - 1);
@@ -170,7 +163,8 @@ const Post = ({ post, isMyPost }) => {
         >
           {post?.creator.firstname} {post?.creator.lastname}
         </h3>
-        {!isMyPost ? (
+
+        { !isAdmin && (!isMyPost ? (
           <button
             className="post-action-button-report"
             onClick={() => report()}
@@ -184,7 +178,7 @@ const Post = ({ post, isMyPost }) => {
           >
             Delete
           </button>
-        )}
+        ))}
       </div>
       <h5 className="post-time">{post?.timePosted}</h5>
       <div className="post-content">{post?.content}</div>
@@ -226,6 +220,7 @@ const Post = ({ post, isMyPost }) => {
           <>{sads?.length}</>
         </>
       </div>
+      {!isAdmin && 
       <div className="comment">
         <input
           type="text"
@@ -235,7 +230,7 @@ const Post = ({ post, isMyPost }) => {
         <button className="btn" onClick={() => comment()}>
           Comment
         </button>
-      </div>
+      </div>}
       <div className="pagination-container">
         <button onClick={handlePreviousPage} disabled={currentPage === 0}>
           Previous

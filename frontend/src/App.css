@@ -9,19 +9,34 @@
   background-color: white;
 }
 
-.navbar{
-  width: 100%;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   height: 60px;
   background-color: #003366;
-  /* display: flex; */
 }
 
-/* button{
-  background-color: #3498DB;
-} */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.middle {
+  display: flex;
+  align-items: center;
+  color: white;
+  margin-left: 15px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  color: white;
+}
 
 .navbar-btn {
-  display: inline-block;
+  margin-right: 10px;
   padding: 10px 20px;
   background-color: transparent;
   color: #FFFFFF;
@@ -33,6 +48,15 @@
 
 .navbar-btn:hover {
   background-color: #004b8d;
+}
+
+.select-container {
+  margin-left: 15px;
+}
+
+.select-container select {
+  width: 300px;
+  height: 40px;
 }
 
 .report-page{

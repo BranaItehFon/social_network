@@ -31,6 +31,7 @@ const Profile = () => {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [isAdmin, setIsAdmin] = useState();
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -43,6 +44,7 @@ const Profile = () => {
           }
         );
         setCurrentUser(response.data);
+        setIsAdmin(response.data.role==='ADMIN')
       } catch (error) {
         console.error("Login failed:", error);
         throw error;
@@ -93,7 +95,7 @@ const Profile = () => {
     };
 
     if (typeof isFollowing === "boolean") {
-      if (isFollowing || currentUser?.id == id) {
+      if ((isFollowing || currentUser?.id == id) || isAdmin) {
         getPosts();
       } else {
         setPosts([]);
@@ -148,26 +150,6 @@ const Profile = () => {
     setCurrentPage(pageIndex);
   };
 
-  const apiKey = '679d126b013a2dbe4ebe1c6dc2ddd56c';
-const location = 'London'; // Specify the location for which you want to retrieve weather data
-
-const getWeatherData = async () => {
-  try {
-    const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-      params: {
-        q: location,
-        appid: apiKey,
-      },
-    });
-
-    console.log(response.data); // Display the weather data in the console or process it as needed
-  } catch (error) {
-    console.error('Failed to fetch weather data:', error);
-  }
-};
-
-getWeatherData();
-
   return (
     <>
       <div className="my-profile">
@@ -175,7 +157,7 @@ getWeatherData();
           <div className="title">
             <h2 style={{ fontSize: "44px", fontWeight: "bold" }}>
               {user?.firstname} {user?.lastname}
-              {currentUser?.id != id &&
+              {currentUser?.id != id && !isAdmin &&
                 (isFollowing == true ? (
                   <>
                     <button className="btn" onClick={() => unfollow()}>
@@ -229,12 +211,8 @@ getWeatherData();
         </button>
       </div>
       <div className="posts">
-        {/* {!isMyProfile ? posts.map((post) => (
-                    <Post post={post} key={post.id}/>
-                )): <></>}
-                {posts.length === 1 ? <h1>There are no posts</h1> : <h1>test</h1>} */}
         {posts.map((post) => (
-          <Post post={post} key={post.id} isMyPost={currentUser?.id == id} />
+          <Post post={post} key={post.id} isMyPost={currentUser?.id == id} isAdmin={isAdmin}/>
         ))}
       </div>
     </>

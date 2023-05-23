@@ -42,11 +42,12 @@ const MainPage = () => {
   const handlePageClick = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
-
+  
   return ( 
     <div className="main-page">
       <div className="title" style={{ backgroundColor: '#f5f5f5', height: '100px'}}>
         <h1 style={{ margin: '1%', fontSize: '80px', color: '#007bff' }}>Feed</h1>  
+        {/* {weather} */}
       </div>
       <div className="posts">
         {posts ? (
@@ -54,7 +55,7 @@ const MainPage = () => {
             <Post post={post} key={post.id} />
           ))
         ) : (
-          <>There are no posts</>
+          <h1>There are no posts</h1>
         )}
       </div>
       <div className="pagination-container">
