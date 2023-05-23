@@ -23,7 +23,7 @@ useEffect(() => {
           },
         }
       );
-      setTotalPages(response.data.totalPages); // Update totalPages here
+      setTotalPages(response.data.totalPages);
       setNotifications(response.data.content);
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
@@ -40,7 +40,7 @@ console.log(notifications)
         <h1>Notifications</h1><div className="pagination-container">
         <button
   onClick={() => setCurrentPage(currentPage - 1)}
-  disabled={currentPage === 0} // Update the condition here
+  disabled={currentPage === 0}
 >
   Back
 </button>
@@ -49,7 +49,7 @@ console.log(notifications)
           <button
           key={index + 1}
           onClick={() => setCurrentPage(index)}
-          disabled={currentPage === index} // Adjust the disabled condition
+          disabled={currentPage === index}
         >
           {index + 1}
         </button>
@@ -57,7 +57,7 @@ console.log(notifications)
         ))}
         <button
   onClick={() => setCurrentPage(currentPage + 1)}
-  disabled={currentPage >= totalPages} // Update the condition here
+  disabled={currentPage >= totalPages}
 >
   Next
 </button>

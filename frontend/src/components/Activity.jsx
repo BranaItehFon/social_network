@@ -22,33 +22,12 @@ ChartJS.register(
 
 
 const Activity = ({ id }) => {
-    const [activityData, setActivityData] = useState();
     const [chartOptions, setChartOptions] = useState({});
     const [user, setUser] = useState();
     const [chartData, setChartData] = useState({
         datasets: [],
       });
 
-
-      // useEffect(() => {
-      //   const getUser = async () => {
-      //       try {
-      //           const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
-      //               headers: {
-      //                   Authorization: `Bearer ${localStorage.getItem('token')}`
-      //               }
-      //           });
-      //           setUser(response.data)
-      //           // console.log(user)
-      //       } catch (error) {
-      //           console.error('Login failed:', error);
-      //           throw error;
-      //       }
-      //   }
-        
-      //   getUser();
-        
-      // }, []);
       useEffect(()=>{
         const getChartData = async () => {
             try {
@@ -85,7 +64,6 @@ const Activity = ({ id }) => {
           
         getChartData();
       }, [user])
-      console.log(chartData);
     return ( 
         <div className="activity">
             <Bar data={chartData} options={chartOptions}/>

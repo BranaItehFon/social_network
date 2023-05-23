@@ -8,8 +8,6 @@ const Users = () => {
     const { username } = useParams();
     const navigate = useNavigate();
     const [text, setText] = useState('');
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
     const [isAdmin, setIsAdmin] = useState();
 
     useEffect(() => {
@@ -51,10 +49,6 @@ const Users = () => {
         const getUsers = async () => {
             try {
                 const response = await axios.get('http://localhost:8080/api/v1/users', {
-                    params: {
-                        size: 3,
-                        page: currentPage
-                    },
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -71,7 +65,7 @@ const Users = () => {
         if (username != '') {
             getUsers();
         }
-    }, [username, currentPage]);
+    }, [username]);
     
     const getFollowers = async () => {
         try {

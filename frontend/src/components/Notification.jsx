@@ -25,7 +25,6 @@ const Notification = () => {
         };
         getNotification();
     }, [])
-    console.log(notification)
     return (
         <div className="notification-unread">
             <p>{notification?.timestamp}</p>
