@@ -86,7 +86,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
     }
   };
 
-  const react = async (reactionType) => {
+  const react = async (react) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/v1/posts/" + post.id + "/react",
@@ -100,6 +100,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
         }
       );
       console.log(response.data);
+      window.location.reload();
     } catch (error) {
       // console.error("Post failed:", error);
       alert(error.response.data.body.detail);
@@ -184,39 +185,57 @@ const Post = ({ post, isMyPost, isAdmin }) => {
       <div className="post-content">{post?.content}</div>
       <div className="post-reactions">
         <>
-          <button
+        {!isMyPost ?  <button
             className="post-action-button-emoji"
             onClick={() => react("LIKE")}
           >
             👍
-          </button>
+          </button>:<button
+            className="post-action-button-emoji"
+          >
+            👍
+          </button>}
           <>{likes?.length}</>
         </>
         <>
-          <button
+        {!isMyPost ? <button
             className="post-action-button-emoji"
             onClick={() => react("LOVE")}
           >
             💖
-          </button>
+          </button>:<button
+            className="post-action-button-emoji"
+          >
+            💖
+          </button>}
+          
           <>{loves?.length}</>
         </>
         <>
-          <button
+        {!isMyPost ? <button
             className="post-action-button-emoji"
             onClick={() => react("ANGRY")}
           >
             😠
-          </button>
+          </button>:<button
+            className="post-action-button-emoji"
+          >
+            😠
+          </button>}
+          
           <>{angrys?.length}</>
         </>
         <>
-          <button
+          {!isMyPost ? <button
             className="post-action-button-emoji"
             onClick={() => react("SAD")}
           >
             😥
-          </button>
+          </button>:<button
+            className="post-action-button-emoji"
+          >
+            😥
+          </button>}
           <>{sads?.length}</>
         </>
       </div>

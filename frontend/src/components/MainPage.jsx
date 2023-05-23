@@ -5,23 +5,21 @@ import './css/UserDetails.css';
 
 const MainPage = () => {
   const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPosts, setShowPosts] = useState();
   
   useEffect(() => {
     const getPosts = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/v1/posts', {
-          params: {
-            size: 2,
-            page: currentPage
-          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
+        console.log(response)
         setPosts(response.data.content);
-        setTotalPages(response.data.totalPages);
+        setShowPosts(response.data.content.slice((currentPage - 1) * 2, currentPage * 2));
+        // setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
         throw error;
@@ -29,29 +27,34 @@ const MainPage = () => {
     };
 
     getPosts();
-  }, [currentPage]);
-
-  const handlePreviousPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
-
-  const handlePageClick = (pageIndex) => {
-    setCurrentPage(pageIndex);
-  };
+  }, []);
+  
+  useEffect(() => {
+    setShowPosts(posts.slice((currentPage - 1) * 2, currentPage * 2));
+  }, [currentPage])
   
   return ( 
     <div className="main-page">
-      <div className="title" style={{ backgroundColor: '#f5f5f5', height: '100px'}}>
-        <h1 style={{ margin: '1%', fontSize: '80px', color: '#007bff' }}>Feed</h1>  
-        {/* {weather} */}
-      </div>
+      <div className="title" style={{ backgroundColor: '#f5f5f5', height: '100px' }}>
+  <h1 style={{ margin: '1%', fontSize: '80px', color: '#007bff' }}>Feed</h1>
+  {/* {weather} */}
+</div>
+<div className="pagination-container">
+  <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+  {Array.from({ length: Math.ceil(posts.length / 2) }, (_, index) => (
+    <button
+      key={index}
+      onClick={() => setCurrentPage(index)}
+    >
+      {index + 1}
+    </button>
+  ))}
+  <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === Math.ceil(posts.length / 2)}>Next</button>
+</div>
+
       <div className="posts">
-        {posts ? (
-          posts.map((post) => (
+        {showPosts ? (
+          showPosts.map((post) => (
             <Post post={post} key={post.id} />
           ))
         ) : (
@@ -59,7 +62,7 @@ const MainPage = () => {
         )}
       </div>
       <div className="pagination-container">
-        <button
+        {/* <button
           onClick={handlePreviousPage}
           disabled={currentPage === 0}
         >
@@ -76,10 +79,10 @@ const MainPage = () => {
         ))}
         <button
           onClick={handleNextPage}
-          disabled={currentPage === totalPages - 1}
+          disabled={currentPage === totalPages}
         >
           Next
-        </button>
+        </button> */}
       </div>
     </div>
   );
