@@ -10,6 +10,27 @@ const Users = () => {
     const [text, setText] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [isAdmin, setIsAdmin] = useState();
+
+    useEffect(() => {
+
+        const getUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                setIsAdmin(response.data.role === 'ADMIN')
+            } catch (error) {
+                console.error('Login failed:', error);
+                throw error;
+            }
+        }
+        getUser();
+
+    }, []);
+
     const getUsersByUsername = async (username) => {
         if(username!=''){
         try {
@@ -18,12 +39,13 @@ const Users = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setUsers(response.data.content);
+            setUsers(response.data);
         } catch (error) {
             console.error('Failed to fetch users by username:', error);
             throw error;
         }}
     };
+    console.log(users);
 
     useEffect(() => {
         const getUsers = async () => {
@@ -38,8 +60,7 @@ const Users = () => {
                     }
                 });
                 console.log(response.data.content);
-                setUsers(response.data.content);
-                setTotalPages(response.data.totalPages);
+                setUsers(response.data);
                 setText('');
             } catch (error) {
                 console.error('Failed to fetch users:', error);
@@ -60,8 +81,8 @@ const Users = () => {
                 }
             });
             console.log(response.data.content);
-            setUsers(response.data.content);
-            setText('You have '+response.data.totalElements+' followers');
+            setUsers(response.data);
+            setText('You have '+response.data.length+' followers');
         } catch (error) {
             console.error('Failed to fetch users:', error);
             throw error;
@@ -75,26 +96,30 @@ const Users = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            console.log(response.data.content);
-            setUsers(response.data.content);
-            setText('You are following '+response.data.totalElements+' users');
+            console.log(response.data);
+            setUsers(response.data);
+            setText('You are following '+response.data.length+' users');
         } catch (error) {
             console.error('Failed to fetch users:', error);
             throw error;
         }
     };
 
-    const handlePreviousPage = () => {
-        setCurrentPage(currentPage - 1);
-      };
-    
-      const handleNextPage = () => {
-        setCurrentPage(currentPage + 1);
-      };
-    
-      const handlePageClick = (pageIndex) => {
-        setCurrentPage(pageIndex);
-      };
+    const getAll = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/api/v1/users', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            console.log(response.data);
+            setUsers(response.data);
+            setText('');
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+            throw error;
+        }
+    }
     
     return (
         <div className="users-page">
@@ -105,33 +130,14 @@ const Users = () => {
                 </div>
                 {text}
                 <div className="right">
-                    <button className="btn" onClick={() => getFollowers()}>Followers</button>
-                    <button className="btn" onClick={() => getFollowing()}>Folowing</button>
+                    <button className="btn" onClick={() => getAll()}>Show all</button>
+                    {!isAdmin && <button className="btn" onClick={() => getFollowers()}>Followers</button>}
+                    {!isAdmin && <button className="btn" onClick={() => getFollowing()}>Folowing</button>}
                 </div>
             </div>
             <div className="users">
-            <div className="pagination-container">
-        <button onClick={handlePreviousPage} disabled={currentPage === 0}>
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageClick(index)}
-            disabled={currentPage === index}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages - 1}
-        >
-          Next
-        </button>
-      </div>
                 {users && users.map((user) => (
-                    <div className="user">
+                    <div className="user" key={user.id}>
                         <h3>{user?.firstname} {user?.lastname}</h3>
                         <button className="btn" onClick={() => navigate('/user/'+user.id)}>Visit profile</button>
                     </div>

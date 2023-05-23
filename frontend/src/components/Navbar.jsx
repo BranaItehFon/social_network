@@ -32,22 +32,22 @@ const Navbar = ({ isLoggedIn, notifications }) => {
 
     const apiKey = '2d87539fd120faf52522d5a6f7c24bea';
     useEffect(() => {
-        // const getWeatherData = async () => {
-        //     try {
-        //         const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
-        //             params: {
-        //                 q: location,
-        //                 appid: apiKey,
-        //             },
-        //         });
+        const getWeatherData = async () => {
+            try {
+                const response = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+                    params: {
+                        q: location,
+                        appid: apiKey,
+                    },
+                });
 
-        //         setWeather(response.data); // Display the weather data in the console or process it as needed
-        //     } catch (error) {
-        //         console.error('Failed to fetch weather data:', error);
-        //     }
-        // };
+                setWeather(response.data); 
+            } catch (error) {
+                console.error('Failed to fetch weather data:', error);
+            }
+        };
 
-        // getWeatherData();
+        getWeatherData();
 
     }, [location])
     console.log(weather)
@@ -60,7 +60,7 @@ const Navbar = ({ isLoggedIn, notifications }) => {
             {(isLoggedIn || isLoggedIn === undefined) && isAdmin && <Link to="/reports"><button className="navbar-btn">Reports</button></Link>}
           </div>
           <div className="middle">
-            {/* <div className="select-container">
+            <div className="select-container">
               <select id="gender" name="gender" onChange={(e) => setLocation(e.target.value)}>
               <option value="Belgrade">Belgrade</option>
                 <option value="London">London</option>
@@ -68,9 +68,9 @@ const Navbar = ({ isLoggedIn, notifications }) => {
               </select>
             </div>
             <div>
-              Temp: {weather?.main.temp}
-              Description: {weather?.weather[0].description}
-            </div> */}
+               Temp: {weather?.main.temp} F
+              Description: {weather?.weather[0].description} 
+            </div>
           </div>
           <div className="navbar-right">
             {isLoggedIn && !isAdmin && <Link to="/notification"><button className="navbar-btn">Notifications</button></Link>}

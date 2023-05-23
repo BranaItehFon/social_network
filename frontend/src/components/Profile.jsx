@@ -32,6 +32,7 @@ const Profile = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isAdmin, setIsAdmin] = useState();
+  const [userId, setUserId] = useState();
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -45,6 +46,7 @@ const Profile = () => {
         );
         setCurrentUser(response.data);
         setIsAdmin(response.data.role==='ADMIN')
+        setUserId(response.data.id);
       } catch (error) {
         console.error("Login failed:", error);
         throw error;
@@ -61,7 +63,6 @@ const Profile = () => {
           }
         );
         setUser(response.data);
-        // console.log(user)
       } catch (error) {
         console.error("Login failed:", error);
         throw error;
@@ -173,7 +174,6 @@ const Profile = () => {
                 ))}
             </h2>
           </div>
-          {currentUser?.id == id && <Activity/>}
           <div className="box">
             <p>
               <strong>Username:</strong> {user?.username}
@@ -181,13 +181,13 @@ const Profile = () => {
             <p>
               <strong>Email:</strong> {user?.email}
             </p>
-          </div>
-          <div className="box">
             <p>
               <strong>Gender:</strong> {user?.gender}
             </p>
           </div>
+          {currentUser?.id == id && <Activity id={userId}/>}
         </div>
+        
       </div>
       <div className="new-post">{currentUser?.id == id && <NewPost />}</div>
       <div className="pagination-container">

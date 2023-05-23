@@ -21,7 +21,7 @@ ChartJS.register(
   );
 
 
-const Activity = () => {
+const Activity = ({ id }) => {
     const [activityData, setActivityData] = useState();
     const [chartOptions, setChartOptions] = useState({});
     const [user, setUser] = useState();
@@ -30,30 +30,30 @@ const Activity = () => {
       });
 
 
-      useEffect(() => {
-        const getUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setUser(response.data)
-                // console.log(user)
-            } catch (error) {
-                console.error('Login failed:', error);
-                throw error;
-            }
-        }
+      // useEffect(() => {
+      //   const getUser = async () => {
+      //       try {
+      //           const response = await axios.get('http://localhost:8080/api/v1/users/currentlyLoggedIn', {
+      //               headers: {
+      //                   Authorization: `Bearer ${localStorage.getItem('token')}`
+      //               }
+      //           });
+      //           setUser(response.data)
+      //           // console.log(user)
+      //       } catch (error) {
+      //           console.error('Login failed:', error);
+      //           throw error;
+      //       }
+      //   }
         
-        getUser();
+      //   getUser();
         
-      }, []);
+      // }, []);
       useEffect(()=>{
         const getChartData = async () => {
             try {
               const response = await axios.get(
-                "http://localhost:8080/api/v1/users/" + user?.id + "/actions",
+                "http://localhost:8080/api/v1/users/" + id + "/actions",
                 {
                   headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -85,6 +85,7 @@ const Activity = () => {
           
         getChartData();
       }, [user])
+      console.log(chartData);
     return ( 
         <div className="activity">
             <Bar data={chartData} options={chartOptions}/>
