@@ -14,7 +14,7 @@ import axios from 'axios';
 import Notification from './components/Notification';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token'))
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   // alert(isLoggedIn)
   // useEffect(() => {
   //   if(localStorage.getItem('token') != null) setIsLoggedIn(true);
