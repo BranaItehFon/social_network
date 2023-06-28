@@ -15,11 +15,11 @@ import Notification from './components/Notification';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  // alert(isLoggedIn)
-  // useEffect(() => {
-  //   if(localStorage.getItem('token') != null) setIsLoggedIn(true);
-  //   else setIsLoggedIn(false);
-  // }, localStorage.getItem('token'))
+  
+  useEffect(() => {
+    if(localStorage.getItem('token') != null) setIsLoggedIn(true);
+    else setIsLoggedIn(false);
+  }, localStorage.getItem('token'))
 
   return (
     <BrowserRouter>

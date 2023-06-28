@@ -29,6 +29,7 @@ const Navbar = ({ isLoggedIn }) => {
     if (isLoggedIn) {
       getUser();
     }
+    
   }, [isLoggedIn]);
   
   const [weather, setWeather] = useState(null);
@@ -85,8 +86,8 @@ const Navbar = ({ isLoggedIn }) => {
       <div className="middle">
         <div className="select-container">
           <select
-            id="gender"
-            name="gender"
+            id="city"
+            name="city"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           >

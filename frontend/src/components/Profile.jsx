@@ -73,7 +73,7 @@ const Profile = () => {
   }, []);
   useEffect(() => {
     const getPosts = async () => {
-      console.log(isFollowing + "WTF");
+      
       try {
         const response = await axios.get(
           "http://localhost:8080/api/v1/posts/users/" + id,

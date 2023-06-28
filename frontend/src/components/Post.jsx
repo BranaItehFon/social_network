@@ -122,8 +122,9 @@ const Post = ({ post, isMyPost, isAdmin }) => {
       );
       window.location.reload();
     } catch (error) {
-      console.error("Post failed:", error);
-      throw error;
+      console.log('test');
+      //console.error("Post failed:", error);
+      //throw error;
     }
   };
   const deletePost = async () => {
@@ -185,7 +186,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
       <div className="post-content">{post?.content}</div>
       <div className="post-reactions">
         <>
-        {!isMyPost ?  <button
+        {(!isMyPost && !isAdmin) ?  <button
             className="post-action-button-emoji"
             onClick={() => react("LIKE")}
           >
@@ -198,7 +199,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
           <>{likes?.length}</>
         </>
         <>
-        {!isMyPost ? <button
+        {(!isMyPost && !isAdmin) ? <button
             className="post-action-button-emoji"
             onClick={() => react("LOVE")}
           >
@@ -212,7 +213,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
           <>{loves?.length}</>
         </>
         <>
-        {!isMyPost ? <button
+        {(!isMyPost && !isAdmin) ? <button
             className="post-action-button-emoji"
             onClick={() => react("ANGRY")}
           >
@@ -226,7 +227,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
           <>{angrys?.length}</>
         </>
         <>
-          {!isMyPost ? <button
+          {(!isMyPost && !isAdmin) ? <button
             className="post-action-button-emoji"
             onClick={() => react("SAD")}
           >
@@ -239,7 +240,7 @@ const Post = ({ post, isMyPost, isAdmin }) => {
           <>{sads?.length}</>
         </>
       </div>
-      {!isAdmin && 
+      {!isAdmin && !isMyPost &&
       <div className="comment">
         <input
           type="text"
